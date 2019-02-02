@@ -29,7 +29,9 @@ class Helper extends BaseObject {
 		ob_implicit_flush( false );
 		extract( $_params_, EXTR_OVERWRITE );
 		try {
+			get_header();
 			require( $_file_ );
+			get_footer();
 			$result = ob_get_clean();
 
 			return $result;
@@ -62,4 +64,28 @@ class Helper extends BaseObject {
 
 		return str_replace( '/', $pathSep, $path );
 	}
+
+	/**
+	 * get results select query string
+	 *
+	 * @param string
+	 *
+	 * @return array
+	 */
+	public function getQueryResult( $query ) {
+		try {
+			$sql = $this->getApp()->db->prepare( $query );
+			$sql->execute();
+			$sql->setFetchMode( \PDO::FETCH_ASSOC );
+		} catch ( \PDOException $e ) {
+			handle_sql_error( $sql, $e->getMessage() );
+		}
+
+		/*TODO  Research Fetch mode PDO*/
+
+		return $sql->fetchAll();
+
+	}
+
+
 }

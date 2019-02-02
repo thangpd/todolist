@@ -22,22 +22,23 @@ abstract class Model extends BaseObject {
 	 */
 	public $attributes = [];
 
+	public function init() {
+		parent::init();
+		$this->attributes = $this->getAttributes();
+	}
+
 
 	/**
 	 * @return mixed
-	 * example :
-	 * return [
-	 *    'name' => [
-	 *        'label' => 'Name',
-	 *        'validate' => ['text', ['length' => 200, 'required' => true, 'message' => 'Please enter a valid name']]
-	 *    ],
-	 *    'age' => [
-	 *        'label' => 'Age',
-	 *        'validate' => ['number', ['max' => 100, 'min' => 0, 'message' => 'Please enter a valid age']]
-	 *    ]
-	 * ]
 	 */
 	public abstract function getAttributes();
+
+	/**
+	 * @params array $args
+	 *
+	 * @return mixed
+	 */
+	public abstract function getData( $args );
 
 	/**
 	 * Abstract function get name of table/model

@@ -1,10 +1,4 @@
 <?php
-/**
- * @author           Pierre-Henry Soria <phy@hizup.uk>
- * @copyright        (c) 2015-2017, Pierre-Henry Soria. All Rights Reserved.
- * @license          Lesser General Public License <http://www.gnu.org/copyleft/lesser.html>
- * @link             http://hizup.uk
- */
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,4 +9,8 @@
     <link rel="stylesheet" href="<?= ROOT_URL ?>static/style.css"/>
 </head>
 <body>
-<div class="center">
+<div class="menu">
+    <ul>
+        <li><a href="<?= ROOT_URL . '?p=admin&act=render' ?>">Admin</a></li>
+    </ul>
+</div>

@@ -4,14 +4,25 @@
 namespace Todolist\core;
 
 
+use Todolist\core\traits\Singleton;
+
 abstract class BaseObject extends \stdClass {
+
 
 	private static $instances = null;
 
+	/**
+	 * Get instance of class.
+	 *
+	 * @access public
+	 * @static
+	 * @return object Return the instance class or create first instance of the class.
+	 */
+
 	public static function getInstance() {
 
-		$class = self::className();
-		if ( empty( self::$instances[ $class ] ) ) {
+		$class = static::className();
+		if ( empty( static::$instances[ $class ] ) ) {
 			self::$instances[ $class ] = new $class();
 		}
 		$app = self::$instances[ $class ];
@@ -19,6 +30,7 @@ abstract class BaseObject extends \stdClass {
 		return $app;
 
 	}
+
 
 	/**
 	 * Returns the fully qualified name of this class.
@@ -32,6 +44,14 @@ abstract class BaseObject extends \stdClass {
 	 * Constructor BaseObject.
 	 */
 	public function __construct() {
+		$this->init();
+	}
+
+
+	/**
+	 * Init function load attribute after instance object
+	 */
+	public function init() {
 
 	}
 

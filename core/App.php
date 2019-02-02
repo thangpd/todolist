@@ -19,6 +19,7 @@ class App extends BaseObject {
 	private $_components = [
 		'router' => '\Todolist\core\components\Router',
 		'helper' => '\Todolist\core\components\Helper',
+		'db' => '\Todolist\core\components\Db',
 	];
 
 	/**
