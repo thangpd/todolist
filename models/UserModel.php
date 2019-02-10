@@ -75,17 +75,62 @@ class UserModel extends Model {
 	 * @return bool
 	 */
 
-	public function verifyLoginUser( $login_arr ) {
-		$data = $this->getData( $login_arr );
-		if ( ! empty( $data['user'] ) && ! empty( $data['pass'] ) ) {
-			$sql = 'select * from users where user="'.$data['user'].'"';
-			$this->getApp()->helper->getQueryResult( $sql );
+	public function verifyLoginUser( $login_arr = array() ) {
+		$login_arr = ! empty( $login_arr ) ? $login_arr : $_POST;
+		$data      = $this->getData( $login_arr );
+		if ( ! isset( $_COOKIE['login_token'] ) ) {
+
+			if ( ! empty( $data['user'] ) && ! empty( $data['pass'] ) ) {
+				//select users from db
+				$sql    = 'select ID, user, password,email from users where user="' . $data['user'] . '" and password="' . md5( $data['pass'] ) . '" ';
+				$result = $this->getApp()->helper->getQueryResult( $sql );
+				$result = array_shift( $result );
+				// set session current_user
+				$this->set_current_users( $result );
+				//create token for cookie remember login
+				$token = md5( implode( ',', $result ) . rand() );
+				//set cookie
+				setcookie( 'login_token', $token );
+				//update cookie for user to valid cookie later
+				$sql = 'update users set cookie = "' . $token . '" where ID=' . $result['ID'];
+				$sql = $this->getApp()->db->prepare( $sql );
+				$sql->execute();
+
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-			throw new \Exception( 'Missing value' . implode( $data ) );
+			if ( isset( $_COOKIE['login_token'] ) && ! empty( $_COOKIE['login_token'] ) ) {
+				$sql = 'select ID,user,password,email from users where cookie="' . $_COOKIE['login_token'] . '"';
+				$sql = $this->getApp()->helper->getQueryResult( $sql );
+				if ( ! empty( $sql ) ) {
+					$result = array_shift( $sql );
+					$this->set_current_users( $result );
+				} else {
+					setcookie( 'login_token', "", time() - 1 );
+					$this->verifyLoginUser( $login_arr );
+				}
+			}
 		}
 
+		return true;
 	}
 
+	/**
+	 * Set current user
+	 *
+	 * @params array users attributes
+	 *
+	 * @return void
+	 *
+	 */
+	private function set_current_users( $arrs_user ) {
+		if ( session_status() !== PHP_SESSION_ACTIVE ) {
+			session_start();
+		}
+		$_SESSION['current_user'] = $arrs_user;
+	}
 
 	/**
 	 * Register user

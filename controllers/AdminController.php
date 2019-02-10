@@ -27,16 +27,13 @@ class AdminController extends Controller {
 	 * return @string;
 	 */
 	public function login() {
-		echo '<pre>';
-		print_r( $_POST );
-		echo '</pre>';
-		if ( ! empty( $_POST ) ) {
-			echo ' has post';
-			$model = new UserModel();
-			$model->verifyLoginUser( $_POST );
-		}
 
-		$this->render( 'login' );
+		$model = new UserModel();
+		if ( $model->verifyLoginUser( $_POST ) ) {
+			$this->render( 'admin' );
+		} else {
+			$this->render( 'login' );
+		}
 	}
 
 }

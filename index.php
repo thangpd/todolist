@@ -14,7 +14,7 @@ require ABSPATH . 'Autoload.php';
 try {
 	Autoload::getInstance()->init();
 	Router::run();
-
+	Router::end();
 } catch ( \Exception $e ) {
 	echo $e->getMessage();
 }

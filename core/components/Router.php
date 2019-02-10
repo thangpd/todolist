@@ -24,9 +24,16 @@ class Router extends BaseObject {
 			} else {
 				call_user_func( array( $objCtrl, 'notFound' ) );
 			}
-
+		} else {
+			print todo()->helper->renderPhpFile( ABSPATH . 'views' . DIRECTORY_SEPARATOR . 'not_found.php' );
 		}
 	}
 
+	public static function end() {
+		if ( session_status() == PHP_SESSION_ACTIVE ) {
+			session_destroy();
+		}
+		die;
+	}
 
 }
