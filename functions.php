@@ -28,8 +28,8 @@ function is_user_logged_in() {
 }
 
 function get_current_user_name() {
-	if ( is_user_logged_in() ) {
-		return $_SESSION['current_user']['user'];
+	if ( isset( $_SESSION['current_user'] ) ) {
+		return $_SESSION['current_user']['user_name'];
 	} else {
 		return false;
 	}

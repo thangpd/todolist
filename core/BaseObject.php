@@ -4,8 +4,6 @@
 namespace Todolist\core;
 
 
-use Todolist\core\traits\Singleton;
-
 abstract class BaseObject extends \stdClass {
 
 

@@ -16,5 +16,7 @@ define( 'DB_COLLATE', '' );
 
 define( 'ROOT_URL', ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] );
 
+define( 'ROOT_URI', ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://' . $_SERVER['HTTP_HOST'] . str_replace( 'index.php', '', $_SERVER['PHP_SELF'] ) );
+
 define( 'TODOLIST_NAMESPACE', 'Todolist' );
 

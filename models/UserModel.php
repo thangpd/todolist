@@ -18,10 +18,11 @@ class UserModel extends Model {
 	 */
 	public function getAttributes() {
 		return array(
-			'id'    => false,
-			'user'  => '',
-			'pass'  => '',
-			'email' => '',
+			'ID'            => false,
+			'user_name'     => '',
+			'user_password' => '',
+			'email'         => '',
+			'cookie'        => '',
 		);
 	}
 
@@ -52,7 +53,7 @@ class UserModel extends Model {
 	 * @return bool;
 	 */
 	public function verifyUser( $data ) {
-		if ( $this->issetUser( $data['user'] ) ) {
+		if ( $this->issetUser( $data['user_name'] ) ) {
 			echo 'User is already registered';
 
 			return false;
@@ -78,43 +79,50 @@ class UserModel extends Model {
 	public function verifyLoginUser( $login_arr = array() ) {
 		$login_arr = ! empty( $login_arr ) ? $login_arr : $_POST;
 		$data      = $this->getData( $login_arr );
-		if ( ! isset( $_COOKIE['login_token'] ) ) {
 
-			if ( ! empty( $data['user'] ) && ! empty( $data['pass'] ) ) {
+		if ( ! isset( $_COOKIE['login_token'] ) || empty( $_COOKIE['login_token'] ) ) {
+			if ( ! empty( $data['user_name'] ) && ! empty( $data['user_password'] ) ) {
 				//select users from db
-				$sql    = 'select ID, user, password,email from users where user="' . $data['user'] . '" and password="' . md5( $data['pass'] ) . '" ';
+				$sql    = 'select ' . implode( ',', array_keys( $data ) ) . ' from users where user_name="' . $data['user_name'] . '" and user_password="' . md5( $data['user_password'] ) . '" ';
 				$result = $this->getApp()->helper->getQueryResult( $sql );
 				$result = array_shift( $result );
-				// set session current_user
-				$this->set_current_users( $result );
-				//create token for cookie remember login
-				$token = md5( implode( ',', $result ) . rand() );
-				//set cookie
-				setcookie( 'login_token', $token );
-				//update cookie for user to valid cookie later
-				$sql = 'update users set cookie = "' . $token . '" where ID=' . $result['ID'];
-				$sql = $this->getApp()->db->prepare( $sql );
-				$sql->execute();
+				if ( ! empty( $result['ID'] ) ) {
+					// set session current_user
+					$this->set_current_users( $result );
+					//create token for cookie remember login
+					$token = md5( implode( ',', $result ) . rand() );
+					//set cookie
+					setcookie( 'login_token', $token );
+					//update cookie for user to valid cookie later
+					$sql = 'update users set cookie = "' . $token . '" where ID=' . $result['ID'];
+					$sql = $this->getApp()->db->prepare( $sql );
+					$sql->execute();
 
-				return true;
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
-		} else {
-			if ( isset( $_COOKIE['login_token'] ) && ! empty( $_COOKIE['login_token'] ) ) {
-				$sql = 'select ID,user,password,email from users where cookie="' . $_COOKIE['login_token'] . '"';
-				$sql = $this->getApp()->helper->getQueryResult( $sql );
-				if ( ! empty( $sql ) ) {
-					$result = array_shift( $sql );
-					$this->set_current_users( $result );
-				} else {
-					setcookie( 'login_token', "", time() - 1 );
-					$this->verifyLoginUser( $login_arr );
-				}
+		} elseif ( isset( $_COOKIE['login_token'] ) && ! empty( $_COOKIE['login_token'] ) ) {
+			$sql = 'select * from users where cookie="' . $_COOKIE['login_token'] . '"';
+			$sql = $this->getApp()->helper->getQueryResult( $sql );
+			if ( ! empty( $sql ) ) {
+				$result = array_shift( $sql );
+				$this->set_current_users( $result );
+			} else {
+				setcookie( 'login_token', "", time() - 1 );
+				unset( $_COOKIE['login_token'] );
+				$this->verifyLoginUser( $login_arr );
 			}
 		}
+		if ( get_current_user_name() ) {
+			return true;
+		} else {
+			return false;
+		}
 
-		return true;
 	}
 
 	/**
@@ -141,34 +149,22 @@ class UserModel extends Model {
 	 * */
 	public function registerUser( $args ) {
 		$data = $this->getData( $args );
-
 		if ( ! $this->verifyUser( $data ) ) {
 			return false;
 		}
-
-
-		$sql = 'insert into ' . $this->getName() . ' values(';
-		foreach ( $data as $key => $val ) {
-			if ( $key == 'pass' ) {
-				$val = md5( $val );
-			}
-			switch ( $val ) {
-				//case $val false is not append to query string
-				case false:
-					$sql .= '""';
-					break;
-				default:
-					$sql .= ',"' . $val . '"';
-					break;
-			}
-
-		}
-		$sql .= ');';
+		$data['user_password'] = md5( $data['user_password'] );
+		$sql                   = 'insert into ' . $this->getName() . ' (user_name,user_password,email) values("' . $data['user_name'] . '","' . $data['user_password'] . '","' . $data['email'] . '")';
 		try {
+			echo '<pre>';
+			print_r( $sql );
+			echo '</pre>';
 			$sql = $this->getApp()->db->prepare( $sql );
+
 			$sql->execute();
-			echo 'sign up ok';
+
+			return true;
 		} catch ( \PDOException $e ) {
+			echo 'error';
 			handle_sql_error( $sql, $e->getMessage() );
 		}
 
@@ -183,7 +179,7 @@ class UserModel extends Model {
 	 * @return @array
 	 */
 	public function getUserByName( $username ) {
-		$res = $this->getApp()->helper->getQueryResult( 'select * from users where user="' . $username . '"' );
+		$res = $this->getApp()->helper->getQueryResult( 'select * from users where user_name="' . $username . '"' );
 
 		return $res;
 	}

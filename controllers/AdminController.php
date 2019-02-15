@@ -15,11 +15,13 @@ class AdminController extends Controller {
 
 		if ( ! empty( $_POST ) ) {
 			$model = new UserModel();
-			$model->registerUser( $_POST );
+			if ( $model->registerUser( $_POST ) ) {
+				$this->render( 'login' );
+			}
 
-
+		} else {
+			$this->render( 'signup' );
 		}
-		$this->render( 'signup' );
 	}
 
 	/**
@@ -27,11 +29,24 @@ class AdminController extends Controller {
 	 * return @string;
 	 */
 	public function login() {
-
 		$model = new UserModel();
 		if ( $model->verifyLoginUser( $_POST ) ) {
 			$this->render( 'admin' );
 		} else {
+			$this->render( 'login' );
+		}
+	}
+
+	/**
+	 * Logout
+	 * @return null;
+	 */
+	public function logout() {
+		if ( isset( $_POST['user_name'] ) && isset( $_POST['password'] ) ) {
+			$this->login();
+		} else {
+			setcookie( 'login_token', '', time() - 1 );
+			unset( $_COOKIE['login_token'] );
 			$this->render( 'login' );
 		}
 	}

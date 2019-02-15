@@ -7,7 +7,7 @@
 		<?php if ( is_user_logged_in() ):
 			?>
             |  You are connected as <?= get_current_user_name(); ?> - <a href="<?= ROOT_URL ?>?p=admin&amp;a=logout">Logout</a> &nbsp; | &nbsp;
-            <a href="<?= ROOT_URL ?>?p=blog&amp;a=all">View All Blog Posts</a>
+            <a href="<?= ROOT_URL ?>?p=calendar&amp;">View All Blog Posts</a>
 		<?php else: ?>
             | <a href="<?= ROOT_URL ?>?p=admin&amp;a=login">Backend Login</a>
             <a href="<?= ROOT_URL ?>?p=admin&amp;a=signup">Backend Create</a>

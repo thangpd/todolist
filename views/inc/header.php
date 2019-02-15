@@ -11,6 +11,7 @@
 <body>
 <div class="menu">
     <ul>
+        <li><a href="<?= ROOT_URL  ?>">Home</a></li>
         <li><a href="<?= ROOT_URL . '?p=admin&act=render' ?>">Admin</a></li>
     </ul>
 </div>
