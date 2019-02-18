@@ -17,9 +17,10 @@ class App extends BaseObject {
 	 * @var array
 	 */
 	private $_components = [
-		'router' => '\Todolist\core\components\Router',
-		'helper' => '\Todolist\core\components\Helper',
-		'db' => '\Todolist\core\components\Db',
+		'router'  => '\Todolist\core\components\Router',
+		'helper'  => '\Todolist\core\components\Helper',
+		'db'      => '\Todolist\core\components\Db',
+		'enqueue' => '\Todolist\core\components\Enqueue',
 	];
 
 	/**

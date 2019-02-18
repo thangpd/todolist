@@ -13,7 +13,6 @@ class Autoload {
 	}
 
 	public function init() {
-
 		spl_autoload_register( array( __CLASS__, 'loadClasses' ) );
 	}
 

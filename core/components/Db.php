@@ -27,5 +27,7 @@ class Db extends BaseObject {
 		return self::$instance;
 	}
 
-
 }
+
+
+

@@ -32,6 +32,20 @@ abstract class Controller extends BaseObject {
 	}
 
 	/**
+	 * Get relative uri of page
+	 * @return bool | string
+	 *
+	 */
+	public function getRelativePagePath( $page = '' ) {
+		if ( empty( $page ) ) {
+			return "?p=" . $this->getControllerName();
+		} else {
+			return "?p=" . $this->getControllerName() . "&a=" . $page;
+		}
+
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getPath() {
@@ -102,7 +116,7 @@ abstract class Controller extends BaseObject {
 	 * @return string
 	 */
 	public function notFound() {
-		$this->renderFile( ABSPATH.'views'.DIRECTORY_SEPARATOR.'not_found.php' );
+		$this->renderFile( ABSPATH . 'views' . DIRECTORY_SEPARATOR . 'not_found.php' );
 	}
 
 }
