@@ -7,7 +7,9 @@ $video['url'] = ROOT_URI . 'assets/video/samplevideo.mp4';
 echo '<pre>';
 print_r( $video );
 echo '</pre>';
-
+echo '<pre>';
+print_r( ROOT_URL );
+echo '</pre>';
 ?>
 
 <video id="lema-video" class="video-js vjs-default-skin lema-video-view">

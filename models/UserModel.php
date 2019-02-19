@@ -99,12 +99,11 @@ class UserModel extends Model {
 					$sql->execute();
 
 					return true;
-				} else {
-					return false;
 				}
-			} else {
-				return false;
 			}
+
+			return false;
+
 		} elseif ( isset( $_COOKIE['login_token'] ) && ! empty( $_COOKIE['login_token'] ) ) {
 			$sql = 'select * from users where cookie="' . $_COOKIE['login_token'] . '"';
 			$sql = $this->getApp()->helper->getQueryResult( $sql );
@@ -155,9 +154,6 @@ class UserModel extends Model {
 		$data['user_password'] = md5( $data['user_password'] );
 		$sql                   = 'insert into ' . $this->getName() . ' (user_name,user_password,email) values("' . $data['user_name'] . '","' . $data['user_password'] . '","' . $data['email'] . '")';
 		try {
-			echo '<pre>';
-			print_r( $sql );
-			echo '</pre>';
 			$sql = $this->getApp()->db->prepare( $sql );
 
 			$sql->execute();
