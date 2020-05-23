@@ -4,23 +4,12 @@ Options +FollowSymlinks
 AddDefaultCharset UTF-8
 ServerSignature Off
 FileETag none
-
 #Disable all directory views (recommended for better security)
 #Disable multi-views (recommended for canonical URIs)
 #Enable symlinks (required for permalinks/rewrites, e.g., index.php → index.html)
 #Specify the default character set for any file served text/plain or text/html (recommended for usability)
 #Disables the server signature (recommended for better security)
 #Disables the ETag Header (recommended for performance)
-<IfModule mod_rewrite.c>
-RewriteEngine On
-rewritebase /
-</IfModule>
-#That needs to be included at least once in order for mod_rewrite to operate.
-<IfModule mod_speling.c>
-CheckSpelling off
-</IfModule>
-#Once enabled, mod_speling redirects misspelled requests to any nearest matching resources.
-#Uses a bit of memory, but can be useful if you've been changing URIs or have lots of similarly named URIs
 
 
 #https://cets.seas.upenn.edu/answers/addtype.html
@@ -74,6 +63,25 @@ AddType image/x-icon ico
  #Specifies the correct language for common files (.html, .css, .js)
  #Force UTF-8 encoding for some common file formats (.html, .css, .js, .xml, .json, .rss, .atom)
  #Adds MIME support for a wide variety of commonly used file types
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REMOTE_ADDR} !^123\.456\.789
+#Every uri start with {test} will be matched with this condition.
+rewritecond %{request_uri} /test [nc]
+RewriteCond %{REQUEST_URI} !/maintenance [NC]
+RewriteRule .* - [R=504,L]
+</IfModule>
+ErrorDocument 504 /todolist/maintenance.html
+<IfModule mod_headers.c>
+Header always set Retry-After “3600”
+</IfModule>
+
+#That needs to be included at least once in order for mod_rewrite to operate.
+<IfModule mod_speling.c>
+CheckSpelling off
+</IfModule>
+#Once enabled, mod_speling redirects misspelled requests to any nearest matching resources.
+#Uses a bit of memory, but can be useful if you've been changing URIs or have lots of similarly named URIs
 
 
 
